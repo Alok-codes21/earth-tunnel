@@ -1,0 +1,18 @@
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#02030a;color:#dfe8ff;font:14px/1.4 system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;left:16px;top:12px;right:340px;pointer-events:none}
+.title b{font-size:20px;letter-spacing:.2em;color:#ffd38a}.title span{display:block;opacity:.7;font-size:12px}
+#readout{display:grid;grid-template-columns:repeat(3,minmax(110px,1fr));gap:8px;margin-top:10px;max-width:520px}
+#readout div{background:rgba(8,14,32,.72);border:1px solid rgba(120,160,255,.25);border-radius:8px;padding:6px 10px;backdrop-filter:blur(6px)}
+#readout label{display:block;font-size:10px;text-transform:uppercase;opacity:.6;letter-spacing:.08em}#readout b{font-size:15px;font-variant-numeric:tabular-nums}
+#result{margin-top:12px;max-width:520px;background:rgba(10,20,40,.9);border:1px solid #ffd38a;border-radius:10px;padding:12px 14px;pointer-events:auto}
+#result h4{margin:0 0 4px;color:#ffd38a;font-size:16px}.hidden{display:none}
+#panel{position:fixed;right:0;top:0;bottom:0;width:324px;overflow:auto;padding:14px 16px;background:rgba(6,10,24,.86);border-left:1px solid rgba(120,160,255,.2);backdrop-filter:blur(8px)}
+#panel h3{margin:12px 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8fb0ff}
+#panel label{display:block;font-size:12px;margin:8px 0}#panel label b{float:right;color:#ffd38a;font-weight:600}
+input[type=range]{width:100%;accent-color:#ffb347}.chk{display:flex;gap:8px;align-items:center}
+.btns{display:flex;gap:8px;margin:14px 0}button{flex:1;background:#1b2a55;color:#fff;border:1px solid #3d5ba8;border-radius:8px;padding:9px 6px;cursor:pointer;font-size:13px}
+button:hover{background:#27407f}#go{background:#c46a12;border-color:#ffb347;font-weight:700}
+#levels{display:flex;flex-direction:column;gap:6px}#levels button{text-align:left;flex:none}#levels button.on{border-color:#ffb347;background:#2a3566}
+#goal{font-size:12px;opacity:.85;margin:8px 0}details{font-size:12px;opacity:.85}details ul{padding-left:16px}
+@media(max-width:800px){#panel{top:auto;height:46%;width:100%;border-left:0;border-top:1px solid #345}#hud{right:8px}#readout{grid-template-columns:repeat(3,1fr)}}
