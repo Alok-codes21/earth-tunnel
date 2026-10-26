@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link rel="icon" href="data:,">
+<title>What If? 8 billion log ek saath jump karein</title>
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; background:#f4f1ea; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#251f21; }
+  #c { position:fixed; inset:0; display:block; touch-action:none; }
+  .card { position:fixed; background:rgba(255,255,255,.88); backdrop-filter:blur(8px); border:1px solid rgba(37,31,33,.09); border-radius:14px; box-shadow:0 4px 24px rgba(37,31,33,.06); }
+  #title { top:14px; left:14px; padding:10px 14px; max-width:min(430px,86vw); }
+  #title b { font-size:15px; letter-spacing:.04em; }
+  #title span { display:block; font-size:11.5px; color:#585254; margin-top:2px; }
+  #hud { top:14px; right:14px; padding:10px 14px; display:flex; gap:16px; }
+  #hud .r { text-align:right; }
+  #hud label { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; }
+  #hud b { font-size:15px; font-variant-numeric:tabular-nums; }
+  #dbwrap { left:14px; bottom:14px; padding:10px 14px; width:min(300px,60vw); }
+  #dbwrap label { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; }
+  #dbbar { height:6px; border-radius:3px; background:#eae9ea; margin:6px 0 4px; overflow:hidden; }
+  #dbfill { height:100%; width:0%; background:#73a89a; transition:width .12s linear; }
+  #dbval { font-size:12px; color:#585254; }
+  #center { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  #count { font-size:min(26vw,180px); font-weight:800; color:#251f21; opacity:0; transition:opacity .15s; text-shadow:0 2px 30px rgba(255,255,255,.8); }
+  #panel { right:14px; bottom:14px; padding:12px 14px; width:min(320px,86vw); max-height:52vh; overflow:auto; }
+  #panel h3 { margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; font-weight:600; }
+  .btn { display:inline-block; border:1px solid rgba(37,31,33,.16); background:#fff; color:#251f21; border-radius:9px; padding:8px 12px; font-size:13px; cursor:pointer; margin:3px 4px 3px 0; }
+  .btn:hover { border-color:#c76b1d; }
+  .btn.primary { background:#c76b1d; border-color:#c76b1d; color:#fff; font-weight:600; }
+  .btn.on { background:#251f21; color:#fff; border-color:#251f21; }
+  .row { display:flex; align-items:center; gap:8px; margin:8px 0; font-size:12.5px; color:#585254; }
+  .row input[type=range] { flex:1; accent-color:#c76b1d; }
+  .row span { min-width:74px; text-align:right; font-variant-numeric:tabular-nums; }
+  .note { font-size:11.5px; color:#8a8385; line-height:1.45; margin-top:8px; }
+  #results { display:none; left:50%; top:50%; transform:translate(-50%,-50%); padding:18px 20px; width:min(420px,90vw); }
+  #results h2 { margin:0 0 4px; font-size:17px; }
+  #results .sub { font-size:12px; color:#8a8385; margin-bottom:10px; }
+  #results table { width:100%; border-collapse:collapse; font-size:13px; }
+  #results td { padding:6px 0; border-bottom:1px solid #eae9ea; }
+  #results td:last-child { text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
+  #facts { left:14px; top:50%; transform:translateY(-50%); padding:10px 14px; font-size:11.5px; color:#585254; max-width:230px; }
+  #facts b { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; margin-bottom:4px; }
+  #facts #recoilv { font-size:15px; font-weight:700; color:#251f21; font-variant-numeric:tabular-nums; }
+  @media (max-width:760px){ #facts{display:none!important} #title{left:12px;right:12px;max-width:none} #hud{top:110px;right:12px;gap:8px;padding:6px 10px;font-size:11px} #dbwrap{left:12px;bottom:64px;width:min(240px,52vw);padding:8px 10px} }
+  #povbar { left:50%; bottom:14px; transform:translateX(-50%); padding:8px 10px; }
+  @media (max-width:760px){ #povbar{left:12px;right:12px;bottom:12px;transform:none;display:flex;gap:5px;justify-content:center;padding:5px 6px} #povbar .btn{font-size:11px;padding:5px 7px;white-space:nowrap} #panel{left:12px;right:12px;bottom:160px;max-height:35vh;overflow:auto} }
+  #stick { position:fixed; width:110px; height:110px; border-radius:50%; border:1.5px solid rgba(37,31,33,.25); background:rgba(255,255,255,.4); display:none; pointer-events:none; }
+  #knob { position:absolute; width:44px; height:44px; border-radius:50%; background:rgba(37,31,33,.55); left:33px; top:33px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="title" class="card"><b>WHAT IF? — 8 BILLION JUMPS</b><span>Rann of Kutch jaisi hypothetical salt flat · rendered crowd ek representative sample hai</span></div>
+<div id="hud" class="card">
+  <div class="r"><label>Time</label><b id="r-time">-</b></div>
+  <div class="r"><label>Airborne</label><b id="r-air">0%</b></div>
+  <div class="r"><label>POV</label><b id="r-pov">First person</b></div>
+</div>
+<div id="dbwrap" class="card"><label>Ground vibration (illustrative)</label><div id="dbbar"><div id="dbfill"></div></div><span id="dbval">still desert</span></div>
+<div id="povbar" class="card">
+  <button class="btn" id="ctl">Controls</button>
+  <button class="btn on" data-pov="fp">First person</button><button class="btn" data-pov="tp">Third person</button><button class="btn" data-pov="aerial">Aerial</button>
+</div>
+<div id="panel" class="card">
+  <h3>Experiment controls</h3>
+  <button id="start" class="btn primary">Start countdown</button>
+  <button id="slow" class="btn">Slow motion 0.1x</button>
+  <button id="again" class="btn">Restart</button>
+  <div class="row">Crowd density <input id="density" type="range" min="2" max="6" step="0.5" value="4.5"><span id="density-v">4.5/m²</span></div>
+  <div class="row">Timing spread <input id="spread" type="range" min="0" max="3" step="0.1" value="0"><span id="spread-v">perfect sync</span></div>
+  <div class="row">Avg body mass <input id="masskg" type="range" min="50" max="75" step="1" value="62"><span id="masskg-v">62 kg</span></div>
+  <div class="row">Takeoff speed <input id="takeoff" type="range" min="1.8" max="3.2" step="0.1" value="2.6"><span id="takeoff-v">2.6 m/s</span></div>
+  <div class="note">Physics real hai: ballistic jump (h = v²/2g), momentum conservation (Earth recoil = total human momentum ÷ Earth mass). Timing spread se landings alag-alag hoti hain, isliye ek hi "giant thud" nahi banta. Ye educational estimate hai, measurement nahi. Volume sambhal ke rakhen.</div>
+  <div class="note" id="whatnot"><b>Kya nahi hoga:</b> earthquake nahi, Earth ka orbit/rotation change nahi, buildings collapse nahi. 8 billion logon ka total mass Earth ke mass ka ~10⁻¹³ hissa hai; recoil subatomic scale ka hai.</div>
+</div>
+<div id="results" class="card">
+  <h2>Results</h2>
+  <div class="sub">Educational estimate, illustrative values - measurement nahi. Assumptions neeche.</div>
+  <table>
+    <tr><td>Crowd</td><td id="res-crowd">8 billion</td></tr>
+    <tr><td>Total mass</td><td id="res-mass">-</td></tr>
+    <tr><td>Jump height (avg)</td><td id="res-height">-</td></tr>
+    <tr><td>Flight time (avg)</td><td id="res-flight">-</td></tr>
+    <tr><td>Earth recoil speed</td><td id="res-recoil">-</td></tr>
+    <tr><td>Ground vibration</td><td id="res-vib">local, brief</td></tr>
+  </table>
+  <div class="note" style="margin-top:8px">Aftermath: results ke baad crowd ka reaction (cheer, murmur, shuffling) ek <b>authored reaction</b> hai, physical prediction nahi. Physically justified: koi structural change nahi, vibration seconds mein decay ho kar desert phir still. Scene inspectable rehta hai - ghumo, POV badlo.</div>
+  <div class="note">Important assumption: yeh recoil tab hai jab sab log EK JAGAH jama hain (xkcd premise jaisa). Agar sab apni-apni jagah duniya bhar mein jump karein, momentums alag directions mein cancel hote hain - net recoil aur bhi chhota. Sources: Earth mass 5.9724×10²⁴ kg (NASA Earth Fact Sheet); average adult body mass ~62 kg (Walpole et al. 2012, BMC Public Health); everyone-jumps recoil negligible (xkcd what-if #8). Assumptions: flat terrain, sab log vertical jump karte hain, uniform takeoff speed, no atmospheric/geological coupling modelled. Ground vibration meter qualitative aur illustrative hai - koi seismic magnitude ya Richter number claim nahi kiya gaya.</div>
+  <button id="close-res" class="btn primary">Theek hai</button>
+</div>
+<div id="facts" class="card"><b>Earth recoil (momentum)</b><span id="recoilv">≈ 2.2 × 10⁻¹³ m/s</span><br>immeasurably small - landing par wapas mil jaata hai (net zero). Sliders badal ke dekho, ye live recompute hota hai.</div>
+<div id="center"><div id="count"></div></div>
+<div id="stick"><div id="knob"></div></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
