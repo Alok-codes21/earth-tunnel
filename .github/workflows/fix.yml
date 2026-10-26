@@ -1,0 +1,19 @@
+name: fix-names
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: strip numeric prefixes
+        run: |
+          find . -path ./.git -prune -o -type f -regex '.*/[0-9]+-[^/]*' -print | while read f; do
+            d=$(dirname "$f"); b=$(basename "$f"); git mv "$f" "$d/${b#*-}"
+          done
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git diff --cached --quiet || (git commit -m "Fix file names" && git push)
