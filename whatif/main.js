@@ -498,7 +498,6 @@ function showResults(radiusM) {
   $('res-footprint').textContent = Math.round(areaKm2).toLocaleString('en-IN') + ' km² (disc ~' + Math.round(radiusM * 2 / 1000) + ' km wide)';
   $('res-peak').textContent = '~' + S.peakSeen.toFixed(0) + ' dB brief (estimate; clap ' + settings.clapDb + ' dB @ 1 m maan ke)';
   $('res-delay').textContent = '~' + Math.round(edge / V_SOUND) + ' s (farthest edge ' + (edge / 1000).toFixed(0) + ' km)';
-  $('res-far').textContent = '100-500 km low rumble (bahut rough estimate)';
   ui.results.style.display = 'block';
   // aftermath: authored crowd reaction (celebration/murmur), labelled not-prediction on the panel
   S.phase = 'aftermath'; S.t = 0;
