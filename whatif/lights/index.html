@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link rel="icon" href="data:,">
+<title>What If? 8 billion log ek saath lights band karein</title>
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; background:#05070d; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#eef0f4; }
+  #c { position:fixed; inset:0; display:block; touch-action:none; }
+  .card { position:fixed; background:rgba(16,20,30,.82); backdrop-filter:blur(8px); border:1px solid rgba(238,240,244,.12); border-radius:14px; box-shadow:0 4px 24px rgba(0,0,0,.35); }
+  #title { top:14px; left:14px; padding:10px 14px; max-width:min(430px,86vw); }
+  #title b { font-size:15px; letter-spacing:.04em; }
+  #title span { display:block; font-size:11.5px; color:#9aa3b2; margin-top:2px; }
+  #hud { top:14px; right:14px; padding:10px 14px; display:flex; gap:16px; }
+  #hud .r { text-align:right; }
+  #hud label { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8b93a5; }
+  #hud b { font-size:15px; font-variant-numeric:tabular-nums; }
+  #freqwrap { left:14px; bottom:14px; padding:10px 14px; width:min(300px,60vw); }
+  #freqwrap label { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8b93a5; }
+  #freqbar { height:6px; border-radius:3px; background:#232a3a; margin:6px 0 4px; overflow:hidden; }
+  #freqfill { height:100%; width:0%; background:#5b8dd9; transition:width .12s linear; }
+  #freqfill.hot { background:#ed313e; }
+  #freqval { font-size:12px; color:#9aa3b2; }
+  #center { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  #count { font-size:min(26vw,180px); font-weight:800; color:#eef0f4; opacity:0; transition:opacity .15s; text-shadow:0 2px 30px rgba(0,0,0,.8); }
+  #panel { right:14px; bottom:14px; padding:12px 14px; width:min(320px,86vw); max-height:52vh; overflow:auto; }
+  #panel h3 { margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#8b93a5; font-weight:600; }
+  .btn { display:inline-block; border:1px solid rgba(238,240,244,.2); background:#161b28; color:#eef0f4; border-radius:9px; padding:8px 12px; font-size:13px; cursor:pointer; margin:3px 4px 3px 0; }
+  .btn:hover { border-color:#e8b34b; }
+  .btn.primary { background:#e8b34b; border-color:#e8b34b; color:#161b28; font-weight:600; }
+  .btn.on { background:#eef0f4; color:#161b28; border-color:#eef0f4; }
+  .row { display:flex; align-items:center; gap:8px; margin:8px 0; font-size:12.5px; color:#9aa3b2; }
+  .row input[type=range] { flex:1; accent-color:#e8b34b; }
+  .row span { min-width:74px; text-align:right; font-variant-numeric:tabular-nums; }
+  .note { font-size:11.5px; color:#8b93a5; line-height:1.45; margin-top:8px; }
+  #results { display:none; left:50%; top:50%; transform:translate(-50%,-50%); padding:18px 20px; width:min(420px,90vw); max-height:80vh; overflow:auto; }
+  #results h2 { margin:0 0 4px; font-size:17px; }
+  #results .sub { font-size:12px; color:#8b93a5; margin-bottom:10px; }
+  #results table { width:100%; border-collapse:collapse; font-size:13px; }
+  #results td { padding:6px 0; border-bottom:1px solid #232a3a; }
+  #results td:last-child { text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
+  #facts { left:14px; top:50%; transform:translateY(-50%); padding:10px 14px; font-size:11.5px; color:#9aa3b2; max-width:230px; }
+  #facts b { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8b93a5; margin-bottom:4px; }
+  #facts #loadv { font-size:15px; font-weight:700; color:#eef0f4; font-variant-numeric:tabular-nums; }
+  @media (max-width:760px){ #facts{display:none!important} #title{left:12px;right:12px;max-width:none} #hud{top:110px;right:12px;gap:8px;padding:6px 10px;font-size:11px} #freqwrap{left:12px;bottom:64px;width:min(240px,52vw);padding:8px 10px} }
+  #povbar { left:50%; bottom:14px; transform:translateX(-50%); padding:8px 10px; }
+  @media (max-width:760px){ #povbar{left:12px;right:12px;bottom:12px;transform:none;display:flex;gap:5px;justify-content:center;padding:5px 6px} #povbar .btn{font-size:11px;padding:5px 7px;white-space:nowrap} #panel{left:12px;right:12px;bottom:160px;max-height:35vh;overflow:auto} }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="title" class="card"><b>WHAT IF? — 8 BILLION LIGHTS OFF</b><span>Sab log ek saath apni lights band karein · night side of Earth, space se</span></div>
+<div id="hud" class="card">
+  <div class="r"><label>Time</label><b id="r-time">-</b></div>
+  <div class="r"><label>Lights on</label><b id="r-lights">100%</b></div>
+  <div class="r"><label>POV</label><b id="r-pov">Orbit</b></div>
+</div>
+<div id="freqwrap" class="card"><label>Grid frequency (illustrative swing model)</label><div id="freqbar"><div id="freqfill"></div></div><span id="freqval">50.00 Hz - stable</span></div>
+<div id="povbar" class="card">
+  <button class="btn" id="ctl">Controls</button>
+  <button class="btn on" data-pov="orbit">Orbit</button><button class="btn" data-pov="iss">ISS view</button><button class="btn" data-pov="moon">Moon view</button>
+</div>
+<div id="panel" class="card">
+  <h3>Experiment controls</h3>
+  <button id="start" class="btn primary">Start countdown</button>
+  <button id="again" class="btn">Restart</button>
+  <div class="row">Lighting share of electricity <input id="share" type="range" min="10" max="20" step="1" value="15"><span id="share-v">15%</span></div>
+  <div class="row">Grid inertia H <input id="inertia" type="range" min="2" max="6" step="0.5" value="4"><span id="inertia-v">4 s</span></div>
+  <div class="row">Switch-off spread <input id="spread" type="range" min="0" max="30" step="1" value="2"><span id="spread-v">2 s</span></div>
+  <div class="note">Physics real hai: swing equation (frequency imbalance se badhti/ghatti hai), lighting ka global electricity mein hissa (~15% illustrative assumption; purane IEA estimate ~19%, LEDs se kam), average global generation ~3,300 GW (~29,000 TWh/yr). Ye educational estimate hai, measurement nahi. Koi real grid topology model nahi hai.</div>
+  <div class="note" id="whatnot"><b>Kya nahi hoga:</b> electricity "destroy" nahi hoti, ghar ke appliances damage nahi, satellites ko kuch nahi hota, permanent blackout nahi. Grid instability se protective relays trip ho sakti hain - restoration hours-days (ye part authored simplification hai, real grids alag-alag behave karengi).</div>
+</div>
+<div id="results" class="card">
+  <h2>Results</h2>
+  <div class="sub">Educational estimate, illustrative values - measurement nahi. Assumptions neeche.</div>
+  <table>
+    <tr><td>Lighting load shed</td><td id="res-load">-</td></tr>
+    <tr><td>Energy saved per hour</td><td id="res-energy">-</td></tr>
+    <tr><td>CO2 per hour (0.5 kg/kWh)</td><td id="res-co2">-</td></tr>
+    <tr><td>Peak frequency (model)</td><td id="res-peak">-</td></tr>
+    <tr><td>Peak rate-of-change</td><td id="res-rocof">-</td></tr>
+    <tr><td>ISS se (~400 km)</td><td>cities pehle dikhti thi, ab dark</td></tr>
+    <tr><td>Moon se naked-eye</td><td>pehle bhi nahi dikhte the</td></tr>
+  </table>
+  <div class="note" style="margin-top:8px">Aftermath: Earth ka night side dark rehta hai, sirf faint airglow (physically justified). Grid frequency ek illustrative swing-equation model se aayi hai; relay trips aur recovery <b>authored simplification</b> hain, kisi real grid ka prediction nahi. Scene inspectable rehta hai - orbit karo, POV badlo, lights wapas on karo.</div>
+  <div class="note">Sources: swing equation standard power-systems model; global electricity generation ~29,000 TWh/yr (Ember/IEA ~2023); lighting share ~15% assumption (IEA 2005 ~19%, LED adoption se kam); ROCOF/over-frequency protection ~1 Hz/s, ~50.8 Hz typical thresholds (grid codes vary); city lights Moon se naked-eye nahi dikhte (astronaut reports + optics). Moon-view POV ye dikhata hai.</div>
+  <button id="close-res" class="btn primary">Theek hai</button>
+</div>
+<div id="facts" class="card"><b>Lighting load (estimate)</b><span id="loadv">~495 GW</span><br>global average generation ~3,300 GW ka 15%. Sliders badal ke dekho, ye live recompute hota hai.</div>
+<div id="center"><div id="count"></div></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
