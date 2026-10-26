@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Earth Tunnel - what if you jumped through the planet?</title>
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div class="title"><b>EARTH TUNNEL</b><span>Idealised model: PREM density, computed gravity</span></div>
+  <div id="readout">
+    <div><label>Time</label><b id="r-time">0:00</b></div>
+    <div><label>Depth</label><b id="r-depth">0 km</b></div>
+    <div><label>Speed</label><b id="r-speed">0 m/s</b></div>
+    <div><label>Gravity</label><b id="r-g">9.82 m/s²</b></div>
+    <div><label>Layer</label><b id="r-layer">Surface</b></div>
+    <div><label>Sideways wall push</label><b id="r-wall">0 N/kg</b></div>
+  </div>
+  <div id="result" class="hidden"></div>
+</div>
+<aside id="panel">
+  <div class="btns">
+    <button id="go">Drop</button><button id="reset">Reset</button><button id="view">View: Outside (V)</button>
+  </div>
+  <h3>Mission</h3>
+  <div id="levels"></div>
+  <p id="goal"></p>
+  <h3>Tunnel</h3>
+  <label>Entry latitude <b id="v-lat"></b><input id="lat" type="range" min="-90" max="90" step="0.5" /></label>
+  <label>Direction (azimuth) <b id="v-az"></b><input id="az" type="range" min="0" max="360" step="1" /></label>
+  <label>Tunnel arc across Earth <b id="v-arc"></b><input id="arc" type="range" min="20" max="180" step="1" /></label>
+  <h3>Physics</h3>
+  <label>Shaft vacuum (air pressure) <b id="v-p"></b><input id="p" type="range" min="-9" max="0" step="0.25" /></label>
+  <label>Capsule drag area CdA <b id="v-cda"></b><input id="cda" type="range" min="0.02" max="1" step="0.01" /></label>
+  <label>Launch speed down the shaft <b id="v-v0"></b><input id="v0" type="range" min="0" max="12000" step="10" /></label>
+  <label class="chk"><input id="rot" type="checkbox" /> Earth rotation (Coriolis + centrifugal)</label>
+  <label class="chk"><input id="uni" type="checkbox" /> Textbook uniform-density Earth</label>
+  <label>Time speed <b id="v-ts"></b><input id="ts" type="range" min="0" max="3" step="0.05" /></label>
+  <details><summary>What is real here, what is not</summary>
+    <ul>
+      <li>Density: PREM (Dziewonski &amp; Anderson 1981). Model mass 5.973e24 kg, g at surface 9.82 m/s².</li>
+      <li>Gravity inside Earth: g(r) = G·M(&lt;r)/r², from that density model, integrated numerically.</li>
+      <li>Motion: RK4 integration. With the uniform-density option it matches the textbook formula π√(R³/GM) = 42.2 min.</li>
+      <li>Game rule, not physics: arriving under 20 m/s (or turning around within 100 m of the end) counts as grabbing a ledge. The model itself only outputs arrival speed and time.</li>
+      <li>Rotation option adds centrifugal and Coriolis terms. Tunnel wall is assumed frictionless and perfectly strong.</li>
+      <li>Drag: simple ½ρ·CdA·v² with constant density scaled by shaft pressure. No shock waves, no heating.</li>
+      <li>Not modelled: rock heat (thousands of °C), pressure on the tunnel, melting. No such tunnel can exist.</li>
+      <li>Earth surface image: NASA Blue Marble, via three.js examples.</li>
+    </ul>
+  </details>
+</aside>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
