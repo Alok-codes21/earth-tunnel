@@ -41,8 +41,9 @@
   #results td:last-child { text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
   #facts { left:14px; top:50%; transform:translateY(-50%); padding:10px 14px; font-size:11.5px; color:#585254; max-width:210px; display:none; }
   #facts b { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; margin-bottom:4px; }
-  @media (max-width:760px){ #facts{display:none!important} #hud{gap:10px;padding:8px 10px} #title{max-width:56vw} #panel{bottom:64px} }
+  @media (max-width:760px){ #facts{display:none!important} #title{left:12px;right:12px;max-width:none} #hud{top:110px;right:12px;gap:8px;padding:6px 10px;font-size:11px} #dbwrap{left:12px;bottom:64px;width:min(240px,52vw);padding:8px 10px} }
   #povbar { left:50%; bottom:14px; transform:translateX(-50%); padding:8px 10px; }
+  @media (max-width:760px){ #povbar{left:12px;right:12px;bottom:12px;transform:none;display:flex;gap:5px;justify-content:center;padding:5px 6px} #povbar .btn{font-size:11px;padding:5px 7px;white-space:nowrap} #panel{left:12px;right:12px;bottom:160px;max-height:35vh;overflow:auto} }
   #stick { position:fixed; width:110px; height:110px; border-radius:50%; border:1.5px solid rgba(37,31,33,.25); background:rgba(255,255,255,.4); display:none; pointer-events:none; }
   #knob { position:absolute; width:44px; height:44px; border-radius:50%; background:rgba(37,31,33,.55); left:33px; top:33px; }
 </style>
@@ -55,7 +56,7 @@
   <div class="r"><label>Sound travel</label><b id="r-km">0 km</b></div>
   <div class="r"><label>POV</label><b id="r-pov">First person</b></div>
 </div>
-<div id="dbwrap" class="card"><label>Sound level (simulated)</label><div id="dbbar"><div id="dbfill"></div></div><span id="dbval">quiet desert ~30 dB</span></div>
+<div id="dbwrap" class="card"><label>Sound level (estimate)</label><div id="dbbar"><div id="dbfill"></div></div><span id="dbval">quiet desert ~30 dB</span></div>
 <div id="povbar" class="card">
   <button class="btn" id="ctl">Controls</button>
   <button class="btn on" data-pov="fp">First person</button><button class="btn" data-pov="tp">Third person</button><button class="btn" data-pov="aerial">Aerial</button>
@@ -68,21 +69,23 @@
   <div class="row">Crowd density <input id="density" type="range" min="2" max="6" step="0.5" value="4.5"><span id="density-v">4.5/m²</span></div>
   <div class="row">Timing spread <input id="spread" type="range" min="0" max="2" step="0.1" value="0"><span id="spread-v">perfect sync</span></div>
   <div class="row">Time scale <input id="tscale" type="range" min="1" max="60" step="1" value="30"><span id="tscale-v">30x</span></div>
-  <div class="note">Sound speed real hai: 343 m/s. 42 km wide crowd ke edge se ~61 s delay. Time scale sirf playback compress karta hai, physics nahi badalta. Ye simulated values hain, exact measurement nahi.</div>
+  <div class="row">Clap strength (illustrative assumption) <input id="clapdb" type="range" min="80" max="110" step="1" value="90"><span id="clapdb-v">90 dB @ 1 m</span></div>
+  <div class="note">Sound speed real hai: 343 m/s. ~48 km wide crowd disc ke farthest edge se ~69 s delay. Sab log ek saath clap karte hain; expanding ring wo sources dikhata hai jinka sound ABHI pahunch raha hai (arrival field), clap ka wave nahi. Field tumhari clap-time position ke liye computed hai (stationary listener). Time scale sirf playback compress karta hai, physics nahi badalta. Ye educational estimate hai, exact measurement nahi. Volume sambhal ke rakhen.</div>
   <div class="note" id="whatnot"><b>Kya nahi hoga:</b> explosion nahi, earthquake nahi, Earth ka orbit/rotation change nahi. Claps ki energy planetary scale par negligible hai.</div>
 </div>
 <div id="results" class="card">
   <h2>Results</h2>
-  <div class="sub">Simulated, illustrative values. Assumptions neeche.</div>
+  <div class="sub">Educational estimate, illustrative values - measurement nahi. Assumptions neeche.</div>
   <table>
     <tr><td>Crowd</td><td id="res-crowd">8 billion</td></tr>
     <tr><td>Density</td><td id="res-density">4.5 log/m²</td></tr>
     <tr><td>Footprint</td><td id="res-footprint">1,778 km²</td></tr>
-    <tr><td>Peak level (yahan)</td><td id="res-peak">-</td></tr>
-    <tr><td>Edge of crowd se delay</td><td id="res-delay">-</td></tr>
+    <tr><td>Peak yahan (brief, estimate)</td><td id="res-peak">-</td></tr>
+    <tr><td>Farthest edge se delay</td><td id="res-delay">-</td></tr>
     <tr><td>Farthest audible (estimate)</td><td id="res-far">-</td></tr>
   </table>
-  <div class="note">Assumptions: flat terrain, standard atmosphere, uniform clap strength, independent (incoherent) sources. Real values wind, temperature aur terrain par depend karte hain.</div>
+  <div class="note" style="margin-top:8px">Aftermath: results ke baad crowd ka reaction (cheer, murmur, shuffling) ek <b>authored reaction</b> hai, physical prediction nahi. Physically justified: koi structural change nahi, sound decay ho kar desert quiet (~30 dB). Murmur ka 45-30 dB decay bhi illustrative hai, calibrated nahi. Scene inspectable rehta hai - ghumo, POV badlo.</div>
+  <div class="note">Fixed limitations: flat terrain, free-field 1/r² spreading, no atmospheric absorption/wind/temperature gradient, uniform clap strength, independent incoherent sources, stationary listener (clap-time position par field computed). Continuum approximation ko early times par 20 ms clamp kiya gaya hai kyunki nearest ~1 m mein discrete clappers dominate karte hain. Clap strength ka 80-110 dB @ 1 m range bhi illustrative assumption hai, calibrated measurement nahi (research mein per-clap level log aur clap style ke beech kaafi vary karta hai: >15 dB directivity, 0.7-5.2 dB repeatability spread).</div>
   <button id="close-res" class="btn primary">Theek hai</button>
 </div>
 <div id="facts" class="card"><b>Physics</b>Awaaz 343 m/s chalti hai. Equal independent sources double hone par level sirf +3 dB badhta hai. Door ke claps late pahunchte hain, isliye ek hi "giant clap" nahi sunai deta.</div>
