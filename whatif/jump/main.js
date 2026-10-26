@@ -333,9 +333,9 @@ scene.add(waveRing);
 // ---------- countdown + jump ----------
 function vibLabel(v) {
   if (v < 2) return 'still desert';
-  if (v < 25) return 'light tremor (illustrative)';
-  if (v < 60) return 'strong shaking (illustrative)';
-  return 'very strong shaking (illustrative)';
+  if (v < 25) return 'light tremor (authored visualization)';
+  if (v < 60) return 'strong shaking (authored visualization)';
+  return 'very strong shaking (authored visualization)';
 }
 function tickSequence(dtReal) {
   if (S.phase === 'idle') return;
