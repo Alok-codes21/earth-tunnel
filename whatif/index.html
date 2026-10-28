@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <link rel="icon" href="data:,">
-<title>What If? 8 billion log ek saath clap karein</title>
+<title>What If? - 8 Billion People</title>
 <style>
   html, body { margin:0; height:100%; overflow:hidden; background:#f4f1ea; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#251f21; }
   #c { position:fixed; inset:0; display:block; touch-action:none; }
@@ -23,7 +23,7 @@
   #dbfill.hot { background:#ed313e; }
   #dbval { font-size:12px; color:#585254; }
   #center { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-  #count { font-size:min(26vw,180px); font-weight:800; color:#251f21; opacity:0; transition:opacity .15s; text-shadow:0 2px 30px rgba(255,255,255,.8); }
+  #count { font-size:min(20vw,140px); font-weight:800; color:#251f21; opacity:0; transition:opacity .15s; text-shadow:0 2px 30px rgba(255,255,255,.8); text-align:center; }
   #panel { right:14px; bottom:14px; padding:12px 14px; width:min(320px,86vw); max-height:52vh; overflow:auto; }
   #panel h3 { margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; font-weight:600; }
   .btn { display:inline-block; border:1px solid rgba(37,31,33,.16); background:#fff; color:#251f21; border-radius:9px; padding:8px 12px; font-size:13px; cursor:pointer; margin:3px 4px 3px 0; }
@@ -33,68 +33,56 @@
   .row { display:flex; align-items:center; gap:8px; margin:8px 0; font-size:12.5px; color:#585254; }
   .row input[type=range] { flex:1; accent-color:#c76b1d; }
   .note { font-size:11.5px; color:#8a8385; line-height:1.45; margin-top:8px; }
-  #results { display:none; left:50%; top:50%; transform:translate(-50%,-50%); padding:18px 20px; width:min(420px,90vw); }
+  #results { display:none; left:50%; top:50%; transform:translate(-50%,-50%); padding:18px 20px; width:min(430px,90vw); max-height:80vh; overflow:auto; }
   #results h2 { margin:0 0 4px; font-size:17px; }
   #results .sub { font-size:12px; color:#8a8385; margin-bottom:10px; }
   #results table { width:100%; border-collapse:collapse; font-size:13px; }
   #results td { padding:6px 0; border-bottom:1px solid #eae9ea; }
   #results td:last-child { text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
-  #facts { left:14px; top:50%; transform:translateY(-50%); padding:10px 14px; font-size:11.5px; color:#585254; max-width:210px; display:none; }
-  #facts b { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#8a8385; margin-bottom:4px; }
-  @media (max-width:760px){ #facts{display:none!important} #title{left:12px;right:12px;max-width:none} #hud{top:110px;right:12px;gap:8px;padding:6px 10px;font-size:11px} #dbwrap{left:12px;bottom:64px;width:min(240px,52vw);padding:8px 10px} }
   #povbar { left:50%; bottom:14px; transform:translateX(-50%); padding:8px 10px; }
-  @media (max-width:760px){ #povbar{left:12px;right:12px;bottom:12px;transform:none;display:flex;gap:5px;justify-content:center;padding:5px 6px} #povbar .btn{font-size:11px;padding:5px 7px;white-space:nowrap} #panel{left:12px;right:12px;bottom:160px;max-height:35vh;overflow:auto} }
+  #qbadge { left:50%; top:14px; transform:translateX(-50%); padding:6px 12px; font-size:11px; color:#585254; display:none; }
   #stick { position:fixed; width:110px; height:110px; border-radius:50%; border:1.5px solid rgba(37,31,33,.25); background:rgba(255,255,255,.4); display:none; pointer-events:none; }
   #knob { position:absolute; width:44px; height:44px; border-radius:50%; background:rgba(37,31,33,.55); left:33px; top:33px; }
+  #picker { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(180deg,#dfe4e0,#f6ead6); padding:20px; overflow:auto; }
+  #picker>b { font-size:26px; letter-spacing:.08em; }
+  #picker>span { color:#585254; margin:6px 0 18px; }
+  #pick-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; width:min(760px,92vw); }
+  .pick { border:1px solid rgba(37,31,33,.16); background:#fff; border-radius:12px; padding:14px 12px; font-size:14px; font-weight:600; cursor:pointer; text-align:left; }
+  .pick:hover { border-color:#c76b1d; color:#c76b1d; }
+  @media (max-width:760px){ #title{left:12px;right:12px;max-width:none} #hud{top:110px;right:12px;gap:8px;padding:6px 10px} #dbwrap{left:12px;bottom:64px;width:min(240px,52vw);padding:8px 10px} #povbar{left:12px;right:12px;bottom:12px;transform:none;display:flex;gap:5px;justify-content:center;padding:5px 6px} #povbar .btn{font-size:11px;padding:5px 7px;white-space:nowrap} #panel{left:12px;right:12px;bottom:160px;max-height:35vh} #qbadge{top:auto;bottom:118px} }
 </style>
 </head>
-<body><div id="scenav" style="position:fixed;top:164px;left:12px;z-index:9999;display:flex;gap:8px;font-family:system-ui,sans-serif">
-  <a href="#" style="text-decoration:none;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600;background:#111;color:#fff;box-shadow:0 1px 6px rgba(0,0,0,.25)">8B Claps</a>
-  <a href="./jump/" style="text-decoration:none;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600;background:rgba(255,255,255,.88);color:#111;box-shadow:0 1px 6px rgba(0,0,0,.15);backdrop-filter:blur(6px)">8B Jumps</a>
-</div>
-
+<body>
 <canvas id="c"></canvas>
-<div id="title" class="card"><b>WHAT IF? — 8 BILLION CLAPS</b><span>Rann of Kutch jaisi hypothetical salt flat · rendered crowd ek representative sample hai</span></div>
+<div id="title" class="card"><b id="title-b">WHAT IF?</b><span id="title-s"></span></div>
 <div id="hud" class="card">
-  <div class="r"><label>Time</label><b id="r-time">-</b></div>
-  <div class="r"><label>Sound travel</label><b id="r-km">0 km</b></div>
-  <div class="r"><label>POV</label><b id="r-pov">First person</b></div>
+  <div class="r"><label id="r-time-l">Time</label><b id="r-time">-</b></div>
+  <div class="r"><label id="r-stat-l">-</label><b id="r-stat">-</b></div>
+  <div class="r"><label>POV</label><b id="r-pov">-</b></div>
 </div>
-<div id="dbwrap" class="card"><label>Sound level (estimate)</label><div id="dbbar"><div id="dbfill"></div></div><span id="dbval">quiet desert ~30 dB</span></div>
-<div id="povbar" class="card">
-  <button class="btn" id="ctl">Controls</button>
-  <button class="btn on" data-pov="fp">First person</button><button class="btn" data-pov="tp">Third person</button><button class="btn" data-pov="aerial">Aerial</button>
-</div>
+<div id="dbwrap" class="card"><label id="dblabel">-</label><div id="dbbar"><div id="dbfill"></div></div><span id="dbval">-</span></div>
+<div id="povbar" class="card"><button class="btn" id="ctl">Controls</button></div>
+<div id="qbadge" class="card"></div>
 <div id="panel" class="card">
   <h3>Experiment controls</h3>
   <button id="start" class="btn primary">Start countdown</button>
   <button id="slow" class="btn">Slow motion 0.1x</button>
   <button id="again" class="btn">Restart</button>
-  <div class="row">Crowd density <input id="density" type="range" min="2" max="6" step="0.5" value="4.5"><span id="density-v">4.5/m²</span></div>
-  <div class="row">Timing spread <input id="spread" type="range" min="0" max="2" step="0.1" value="0"><span id="spread-v">perfect sync</span></div>
-  <div class="row">Time scale <input id="tscale" type="range" min="1" max="60" step="1" value="30"><span id="tscale-v">30x</span></div>
-  <div class="row">Clap strength (illustrative assumption) <input id="clapdb" type="range" min="80" max="110" step="1" value="90"><span id="clapdb-v">90 dB @ 1 m</span></div>
-  <div class="note">Sound speed real hai: 343 m/s. ~48 km wide crowd disc ke farthest edge se ~69 s delay. Sab log ek saath clap karte hain; expanding ring wo sources dikhata hai jinka sound ABHI pahunch raha hai (arrival field), clap ka wave nahi. Field tumhari clap-time position ke liye computed hai (stationary listener). Time scale sirf playback compress karta hai, physics nahi badalta. Ye educational estimate hai, exact measurement nahi. Volume sambhal ke rakhen.</div>
-  <div class="note" id="whatnot"><b>Kya nahi hoga:</b> explosion nahi, earthquake nahi, Earth ka orbit/rotation change nahi. Claps ki energy planetary scale par negligible hai.</div>
+  <div id="sliders"></div>
+  <div class="note" id="panel-note"></div>
+  <div class="note" id="whatnot"></div>
 </div>
 <div id="results" class="card">
   <h2>Results</h2>
-  <div class="sub">Educational estimate, illustrative values - measurement nahi. Assumptions neeche.</div>
-  <table>
-    <tr><td>Crowd</td><td id="res-crowd">8 billion</td></tr>
-    <tr><td>Density</td><td id="res-density">4.5 log/m²</td></tr>
-    <tr><td>Footprint</td><td id="res-footprint">1,778 km²</td></tr>
-    <tr><td>Peak yahan (brief, estimate)</td><td id="res-peak">-</td></tr>
-    <tr><td>Farthest edge se delay</td><td id="res-delay">-</td></tr>
-  </table>
-  <div class="note" style="margin-top:8px">Aftermath: results ke baad crowd ka reaction (cheer, murmur, shuffling) ek <b>authored reaction</b> hai, physical prediction nahi. Physically justified: koi structural change nahi, sound decay ho kar desert quiet (~30 dB). Murmur ka 45-30 dB decay bhi illustrative hai, calibrated nahi. Scene inspectable rehta hai - ghumo, POV badlo.</div>
-  <div class="note">Fixed limitations: flat terrain, free-field 1/r² spreading, no atmospheric absorption/wind/temperature gradient, uniform clap strength, independent incoherent sources, stationary listener (clap-time position par field computed). Continuum approximation ko early times par 20 ms clamp kiya gaya hai kyunki nearest ~1 m mein discrete clappers dominate karte hain. Clap strength ka 80-110 dB @ 1 m range bhi illustrative assumption hai, calibrated measurement nahi (research mein per-clap level log aur clap style ke beech kaafi vary karta hai: >15 dB directivity, 0.7-5.2 dB repeatability spread).</div>
-  <button id="close-res" class="btn primary">Theek hai</button>
+  <div class="sub">Educational estimate with illustrative values - not a measurement. Assumptions below.</div>
+  <table id="res-rows"></table>
+  <div id="res-notes"></div>
+  <button id="close-res" class="btn primary">Got it</button>
 </div>
-<div id="facts" class="card"><b>Physics</b>Awaaz 343 m/s chalti hai. Equal independent sources double hone par level sirf +3 dB badhta hai. Door ke claps late pahunchte hain, isliye ek hi "giant clap" nahi sunai deta.</div>
 <div id="center"><div id="count"></div></div>
 <div id="stick"><div id="knob"></div></div>
+<div id="picker"></div>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
-<script type="module" src="./main.js"></script>
+<script type="module" src="./engine.js"></script>
 </body>
 </html>
